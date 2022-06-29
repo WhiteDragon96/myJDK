@@ -817,7 +817,7 @@ public class PrintStream extends FilterOutputStream
      *
      * @param x  The <code>Object</code> to be printed.
      */
-    public void println(Object x) {
+    public void println(Object x) {//hello println
         String s = String.valueOf(x);
         synchronized (this) {
             print(s);

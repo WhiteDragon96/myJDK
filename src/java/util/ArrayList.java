@@ -110,7 +110,7 @@ public class ArrayList<E> extends AbstractList<E>
     private static final long serialVersionUID = 8683452581122892189L;
 
     /**
-     * Default initial capacity.
+     * Default initial capacity.默认初始容量
      */
     private static final int DEFAULT_CAPACITY = 10;
 
