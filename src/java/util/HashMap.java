@@ -374,7 +374,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
-     * Returns a power of two size for the given target capacity.
+     * Returns a power of two size for the given target capacity. // 返回给定目标容量的2次方大小。
      */
     static final int tableSizeFor(int cap) {
         int n = cap - 1;
@@ -619,29 +619,43 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @param hash hash for key
      * @param key the key
      * @param value the value to put
-     * @param onlyIfAbsent if true, don't change existing value
-     * @param evict if false, the table is in creation mode.
+     * @param onlyIfAbsent if true, don't change existing value 如果当前位置已存在一个值，是否替换，false是替换，true是不替换
+     * @param evict if false, the table is in creation mode. 表是否在创建模式，如果为false，则表是在创建模式。
      * @return previous value, or null if none
      */
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
-        if ((tab = table) == null || (n = tab.length) == 0)
+        if ((tab = table) == null || (n = tab.length) == 0) // 1.先判断此时的数组是否为空，如果为空则进行resize操作下
             n = (tab = resize()).length;
+        // 2.以hash索引数组的长度-1与key的hash值进行与运算，得出在数组中的索引，如果索引指定的位置
+        // 为空，则代表可以插入，直接插入一个新的node
         if ((p = tab[i = (n - 1) & hash]) == null)
             tab[i] = newNode(hash, key, value, null);
         else {
             Node<K,V> e; K k;
+            // 3.判断当前key是否存在，如果是则进行替换操作
             if (p.hash == hash &&
                     ((k = p.key) == key || (key != null && key.equals(k))))
                 e = p;
+                // 4.如果key不存在，则判断当前节点是否为树类型，如果是树类型的话，
+                // 则按照树的操作去追加新节点内容
             else if (p instanceof TreeNode)
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
             else {
+                // 5.如果出现hash冲突的节点不是树类型，则说明当前发生的碰撞在链表里面，
+                // 则这个时候就进入循环处理逻辑
                 for (int binCount = 0; ; ++binCount) {
+                    // 6.先判断被碰撞的节点的下一个节点是否为空
                     if ((e = p.next) == null) {
+                        // 如果为空则将新节点放到被碰撞节点的下一个节点
                         p.next = newNode(hash, key, value, null);
+                        // 7.作为后继节点之后判断当前链表长度是否超过最大允许链表长度8，
+                        // 如果大于的话，则转为红黑树执行插入
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                        // 8.如果map的索引表为空或者当前索引表长度还小于64（最大转红黑树的索引数组表长度），
+                        // 那么进行resize操作就行了；否则，如果被碰撞节点不为空，
+                        // 那么就顺着被碰撞节点这条树往后新增该新节点
                             treeifyBin(tab, hash);
                         break;
                     }
@@ -651,6 +665,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                     p = e;
                 }
             }
+            // 如果替换成功，返回老的value
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
                 if (!onlyIfAbsent || oldValue == null)
@@ -659,6 +674,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 return oldValue;
             }
         }
+        //9.将记录修改次数加1，判断是否需要扩容，如果需要就扩容
         ++modCount;
         if (++size > threshold)
             resize();

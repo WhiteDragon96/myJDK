@@ -151,8 +151,8 @@ public final class Optional<T> {
      * otherwise do nothing.
      *
      * @param consumer block to be executed if a value is present
-     * @throws NullPointerException if value is present and {@code consumer} is
-     * null
+     * @throws NullPointerException if value is present and {@code consumer} is null
+     * 不是 null 就执行consumer
      */
     public void ifPresent(Consumer<? super T> consumer) {
         if (value != null)
@@ -207,6 +207,7 @@ public final class Optional<T> {
      * otherwise an empty {@code Optional}
      * @throws NullPointerException if the mapping function is null
      */
+    // 如果当前 Optional 为 Optional.empty，则依旧返回 Optional.empty；否则返回一个新的 Optional，该 Optional 包含的是：函数 mapper 在以 value 作为输入时的输出值。
     public<U> Optional<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
         if (!isPresent())

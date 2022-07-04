@@ -228,11 +228,11 @@ public class ArrayList<E> extends AbstractList<E>
         }
 
     private void ensureCapacityInternal(int minCapacity) {
-        ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));
+        ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));//判断是否需要扩容
     }
 
     private void ensureExplicitCapacity(int minCapacity) {
-        modCount++;
+        modCount++;//集合的修改次数
 
         // overflow-conscious code
         if (minCapacity - elementData.length > 0)
@@ -256,7 +256,7 @@ public class ArrayList<E> extends AbstractList<E>
     private void grow(int minCapacity) {
         // overflow-conscious code
         int oldCapacity = elementData.length;
-        int newCapacity = oldCapacity + (oldCapacity >> 1);
+        int newCapacity = oldCapacity + (oldCapacity >> 1);//相当于oldCapacity的1.5倍
         if (newCapacity - minCapacity < 0)
             newCapacity = minCapacity;
         if (newCapacity - MAX_ARRAY_SIZE > 0)
